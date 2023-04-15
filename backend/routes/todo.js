@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
     if (!existUserId) {
       return res.status(400).json({
         ok: false,
-        error: "This userId is not existed",
+        error: "Not existed userId",
       });
     }
 
@@ -58,17 +58,17 @@ router.get("/:userId", async (req, res) => {
     if (!userId) {
       return res.status(400).json({
         ok: false,
-        error: "This userId is not existed",
+        error: "Not existed userId",
       });
     }
 
-    const getTodo = await prisma.todo.findMany({
+    const todos = await prisma.todo.findMany({
       where: {
         userId: parseInt(userId),
       },
     });
 
-    res.json({ ok: true, todo: getTodo });
+    res.json({ ok: true, todos });
   } catch (error) {
     console.error(error);
   }
