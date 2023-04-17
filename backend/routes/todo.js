@@ -54,6 +54,7 @@ router.post("/", async (req, res) => {
 router.get("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
+    const { skip } = req.query;
 
     if (!userId) {
       return res.status(400).json({
@@ -66,6 +67,11 @@ router.get("/:userId", async (req, res) => {
       where: {
         userId: parseInt(userId),
       },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: parseInt(skip),
+      take: 5,
     });
 
     res.json({ ok: true, todos });
