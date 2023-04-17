@@ -1,10 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Login from "./components/Login";
 import TodoCard from "./components/TodoCard";
 import CreateTodo from "./components/CreateTodo";
+import axios from "axios";
 
 function App() {
   const [user, setUser] = useState();
+  const [todos, setTodos] = useState();
+
+  const getTodos = async () => {
+    try {
+      if (!user) return;
+
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/todo/${user.id}`
+      );
+
+      setTodos(response.data.todos);
+    } catch (error) {
+      console.error(error);
+      alert("You failed to get your ToDoList");
+    }
+  };
+
+  useEffect(() => {
+    getTodos();
+  }, [user]);
 
   if (!user) {
     return <Login setUser={setUser} />;
@@ -19,7 +40,10 @@ function App() {
       </div>
       <CreateTodo />
       <div className="mt-16 flex flex-col w-1/2">
-        <TodoCard />
+        {todos &&
+          todos.map((v, i) => {
+            return <TodoCard key={i} todo={v.todo} isDone={v.isDone} />;
+          })}
       </div>
     </div>
   );
